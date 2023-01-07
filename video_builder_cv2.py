@@ -1,19 +1,18 @@
 import cv2
 import os
 
-image_folder = 'mandy_pngs'
-video_name = 'video.mp4'
+def build_video_from_pngs(image_folder: str, video_name: str = "output.mp4"):
 
-images = [img for img in os.listdir(image_folder) if img.endswith(".png")]
-
-frame = cv2.imread(os.path.join(image_folder, images[0]))
-height, width, layers = frame.shape
-
-fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-video = cv2.VideoWriter(video_name, fourcc, 5, frameSize=(width,height))
-
-for image in images:
-    video.write(cv2.imread(os.path.join(image_folder, image)))
-
-cv2.destroyAllWindows()
-video.release()
+    images = [img for img in os.listdir(image_folder) if img.endswith(".png")]
+    
+    frame = cv2.imread(os.path.join(image_folder, images[0]))
+    height, width, layers = frame.shape
+    
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    video = cv2.VideoWriter(video_name, fourcc, 5, frameSize=(width,height))
+    
+    for image in images:
+        video.write(cv2.imread(os.path.join(image_folder, image)))
+    
+    cv2.destroyAllWindows()
+    video.release()
