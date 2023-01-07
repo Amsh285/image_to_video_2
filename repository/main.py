@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, send_file, Response
+from flask import Flask, request, send_file
 import base64
 import os
 
+from glob import glob
+from io import BytesIO
+from zipfile import ZipFile
 
 app = Flask(__name__)
 
@@ -26,9 +29,23 @@ def upload_files():
 
     return {'message': 'File(s) saved successful.'}, 201
 
-@app.route("/load_images", methods={"get"})
-def download_files():
-    form_data = request.form.to_dict()
-    print(form_data)
 
-    return 200
+@app.route("/load_files", methods={"get"})
+def download_files():
+    filenames = request.form.getlist("filenames")
+    image_folder = os.path.join(app.instance_path, "upload_images")
+    stream = BytesIO()
+
+    with ZipFile(stream, 'w') as zf:
+        for filename in filenames:
+            try:
+                zf.write(os.path.join(image_folder, filename), filename)
+            except FileNotFoundError:
+                return f'File: {filename} could not be found', 404
+            except IOError:
+                return f'File: {filename} could not be processes', 500
+            except OSError:
+                return f'File: {filename} could not be processes', 500
+    stream.seek(0)
+
+    return send_file(stream, as_attachment=True, download_name="archive.zip")

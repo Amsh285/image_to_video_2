@@ -37,6 +37,11 @@ def load_files():
     terminator = request.args.get("terminator")
 
     file_names = request_file_names.split(terminator)
-    print(file_names)
 
-    return "ois guad", 200
+    payload = {'filenames': file_names}
+    result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
+
+    if result.status_code == 200:
+        return Response(result.content, mimetype='application/zip', status=200)
+
+    return result.text, result.status_code
