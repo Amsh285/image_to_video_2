@@ -1,22 +1,47 @@
-from flask import Flask, render_template, request, send_file
-
-app = Flask(__name__)
+from flask import Flask, render_template, request, send_file, Response
+import requests
+import base64
 
 #flask --app main run
+#flask --app frontend/main run --port=5000
+
+app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
     return render_template('index.html')
 
-@app.route("/process_images", methods=["post"])
-def process_images():
-    #print(request.files.getlist("imgs"))
-    #print(request.files["imgs"])
+@app.route("/upload_images")
+def navigate_upload_images():
+    return render_template("imageupload.html")
 
-    for img in request.files.getlist("imgs"):
-        print(img.filename)
+@app.route("/download_images")
+def navigate_download_images():
+    return render_template("imagedownload.html")
 
-    print(request.files.getlist("imgs")[1])
-    print(request.files.getlist("imgs")[1].filename)
+@app.route("/save_files", methods=["post"])
+def save_images():
+    payload = list()
 
-    return "eine nette meldung"
+    for file in request.files.getlist("imgs"):
+        t = file.read()
+        payload.append((file.filename, base64.b64encode(t)))
+
+    result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
+    return result.text, result.status_code
+
+
+@app.route("/load_files", methods=["get"])
+def load_files():
+    request_file_names = request.args.get("filenames")
+    terminator = request.args.get("terminator")
+
+    file_names = request_file_names.split(terminator)
+
+    payload = {'filenames': file_names}
+    result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
+
+    if result.status_code == 200:
+        return Response(result.content, mimetype='application/zip', status=200)
+
+    return result.text, result.status_code
