@@ -8,7 +8,7 @@ def build_video_from_pngs(image_folder: str, video_name: str = "output.mp4"):
     frame = cv2.imread(os.path.join(image_folder, images[0]))
     height, width, layers = frame.shape
     
-    print("Video saved to:", os.getcwd())
+    #print("Video saved to:", os.getcwd())
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video = cv2.VideoWriter(video_name, fourcc, 5, frameSize=(width,height))
