@@ -19,6 +19,10 @@ def navigate_upload_images():
 def navigate_download_images():
     return render_template("imagedownload.html")
 
+@app.route("/create_video")
+def navigate_create_video():
+    return render_template("videodownload.html")
+
 @app.route("/save_files", methods=["post"])
 def save_images():
     payload = list()
@@ -29,7 +33,6 @@ def save_images():
 
     result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
     return result.text, result.status_code
-
 
 @app.route("/load_files", methods=["get"])
 def load_files():
@@ -43,5 +46,19 @@ def load_files():
 
     if result.status_code == 200:
         return Response(result.content, mimetype='application/zip', status=200)
+
+    return result.text, result.status_code
+
+
+@app.route("/request_generate_video", methods=["post"])
+def request_generate_video():
+    request_file_names = request.form.get("filenames")
+    terminator = request.form.get("terminator")
+    video_name = request.form.get("videoname")
+
+    file_names = request_file_names.split(terminator)
+    payload = {'videoname': video_name, 'filenames': file_names}
+
+    result = requests.post(url="http://127.0.0.1:5002/build_videos_from_repo", data=payload)
 
     return result.text, result.status_code
