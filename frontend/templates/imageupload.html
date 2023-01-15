@@ -5,6 +5,16 @@
     <title>Image to csv</title>
 </head>
 <body>
+    <h1>Hoi</h1>
+    <table>
+        <tr>
+            <td><a href="/upload_images">Upload Images</a></td>
+            <td><a href="/download_images">Download Images</a></td>
+            <td><a href="/create_video">Create Video</a></td>
+            <td><a href="/show_video">Show Video</a></td>
+        </tr>
+    </table>
+    <hr>
     <h1>Your images here...</h1>
     <div>
         <form action="save_files" method="post" enctype="multipart/form-data">
@@ -12,5 +22,7 @@
             <input type="submit" value="Upload">
         </form>
     </div>
+    <hr>
+    {{ filenames }}
 </body>
 </html>

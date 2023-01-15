@@ -15,17 +15,18 @@
         </tr>
     </table>
     <hr>
-    <h1>Your images here...</h1>
-    <div>
-        <form action="load_files" method="get" enctype="multipart/form-data">
-            <label for="filenames">Filenames:</label></br>
-            <input type="text" id="filenames" name="filenames"></br>
-            <input type="submit" value="Download"></br>
+    <h1>Show old Videos...</h1>
 
+    <div>
+        <form action="request_old_video" method="post" enctype="multipart/form-data">
+            <label for="videoname">Videoname:</label></br>
+            <input type="text" id="videonames" name="videonames"></br>
+
+            <input type="submit" value="Download"></br>
             <input type="hidden" name="terminator" value=" ">
         </form>
     </div>
     <hr>
-    {{ filenames }}
+    {{ filenames | safe }}
 </body>
 </html>
