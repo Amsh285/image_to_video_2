@@ -29,6 +29,16 @@ def upload_files():
 
     return {'message': 'File(s) saved successful.'}, 201
 
+@app.route("/save_video", methods=["post"])
+def save_video():
+    file_data = request.files["video"]
+
+    video_folder = os.path.join(app.instance_path, "upload_videos")
+    os.makedirs(video_folder, exist_ok=True)
+
+    file_data.save(os.path.join(video_folder, file_data.filename))
+
+    return "created", 201
 
 @app.route("/load_files", methods={"get"})
 def download_files():
