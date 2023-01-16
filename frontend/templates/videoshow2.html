@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Image sachen</title>
+    <title>Image to csv</title>
 </head>
 <body>
     <h1>Hoi</h1>
@@ -11,9 +11,18 @@
             <td><a href="/upload_images">Upload Images</a></td>
             <td><a href="/download_images">Download Images</a></td>
             <td><a href="/create_video">Create Video</a></td>
-            <td><a href="/show_video">Show Video</a></td>
+            <td><a href="/show_video">Download Video</a></td>
         </tr>
     </table>
     <hr>
+    <h1>Show old Videos...</h1>
+    <hr>
+    <div style="margin: 10px auto;">
+		<video autoplay="autoplay" controls="controls" preload="preload">
+			<source src="/display/{{ filename }}" type="video/mp4"></source>
+		</video>
+	</div>
+    <hr>
+
 </body>
 </html>
