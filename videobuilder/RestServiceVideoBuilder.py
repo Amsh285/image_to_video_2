@@ -1,5 +1,5 @@
 import os
-
+import shutil
 from flask import Flask, jsonify, request
 import requests
 import base64
@@ -12,10 +12,10 @@ from zipfile import ZipFile
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
-#flask --app RestServiceVideoBuilder run --port=5002
+#flask --app videobuilder\RestServiceVideoBuilder run --port=5002
 
 #@app.route('/', methods=['GET', 'POST'])
-# GOTO: http://localhost:5000/rest/data/v1.0/json/en/generate/video/ to generate video
+# GOTO: http://localhost:5002/rest/data/v1.0/json/en/generate/video/ to generate video
 @app.route('/rest/data/v1.0/json/en/generate/video/', methods=['GET', 'POST'])
 def generate_video():
 
@@ -40,6 +40,9 @@ def build_videos_from_repo():
     zip_stream = io.BytesIO(result.content)
 
     image_folder = os.path.join(app.instance_path, "temp_images")
+    if os.path.exists(image_folder):
+        shutil.rmtree(image_folder)
+        
     os.makedirs(image_folder, exist_ok=True)
 
     with ZipFile(zip_stream, 'r') as zf:
@@ -52,6 +55,7 @@ def build_videos_from_repo():
 
         build_video_from_pngs(image_folder, video_name)
 
+    shutil.rmtree(image_folder)
     payload = list()
 
     with open(video_name, "rb") as file:
