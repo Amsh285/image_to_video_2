@@ -10,9 +10,9 @@ import io
 from zipfile import ZipFile
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
+#app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
-#flask --app videobuilder\RestServiceVideoBuilder run --port=5002
+#flask --app videobuilder\main run --port=5002
 
 #@app.route('/', methods=['GET', 'POST'])
 # GOTO: http://localhost:5002/rest/data/v1.0/json/en/generate/video/ to generate video
@@ -65,7 +65,7 @@ def build_videos_from_repo():
     return "internal server error", 500
 
 
-if __name__ == '__main__':   
-    app.run()
+#if __name__ == '__main__':   
+    #app.run()
 
-    #app.run(host="0.0.0.0", port='5000', debug=True)
+   # app.run(host="0.0.0.0", port='5002', debug=True)
