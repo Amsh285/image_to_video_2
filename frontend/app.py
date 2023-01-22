@@ -15,25 +15,25 @@ def hello_world():
 @app.route("/upload_images")
 def navigate_upload_images():
     payload = list()
-    result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_files', data=payload)
     return render_template("imageupload.html", filenames=result.text)
 
 @app.route("/download_images")
 def navigate_download_images():
     payload = list()
-    result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_files', data=payload)
     return render_template("imagedownload.html", filenames=result.text)
 
 @app.route("/create_video")
 def navigate_create_video():
     payload = list()
-    result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_files', data=payload)
     return render_template("videodownload.html", filenames=result.text)
 
 @app.route("/show_video")
 def navigate_show_video():
     payload = list()
-    result = requests.post(url='http://127.0.0.1:5001/save_video', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_video', data=payload)
     
     d1 = '<a target="_blank" href="/show_video/'
     d2 = '">'
@@ -45,7 +45,7 @@ def navigate_show_video():
             alllinks = alllinks + d1 + fn + d2 + fn + d3
     return render_template("videoshow.html", filenames=alllinks)
 
-@app.route("/save_files", methods=["post"])
+@app.route("/save_files", methods=['GET', 'POST'])
 def save_images():
     payload = list()
 
@@ -56,11 +56,11 @@ def save_images():
         t = file.read()
         payload.append((file.filename, base64.b64encode(t)))
 
-    result = requests.post(url='http://127.0.0.1:5001/save_files', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_files', data=payload)
     #return result.text, result.status_code
     return render_template("imageupload.html", filenames=result.text)
 
-@app.route("/load_files", methods=["get"])
+@app.route("/load_files", methods=['GET', 'POST'])
 def load_files():
     request_file_names = request.args.get("filenames")
     terminator = request.args.get("terminator")
@@ -72,7 +72,7 @@ def load_files():
     print("folder:" + video_name)
     payload = {'filenames': file_names, 'videoname': video_name}
 
-    result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
+    result = requests.get(url="http://image_to_video.repo:5001/load_files", data=payload)
 
     if result.status_code == 200 or result.status_code == 201:
         return Response(result.content, mimetype='application/zip', status=200)
@@ -83,7 +83,7 @@ def load_files():
     #return result.text, result.status_code
 
 
-@app.route("/request_generate_video", methods=["post"])
+@app.route("/request_generate_video", methods=['GET', 'POST'])
 def request_generate_video():
     request_file_names = request.form.get("filenames")
     terminator = request.form.get("terminator")
@@ -92,14 +92,14 @@ def request_generate_video():
     file_names = request_file_names.split(terminator)
     payload = {'videoname': video_name, 'filenames': file_names}
 
-    result = requests.post(url="http://127.0.0.1:5002/build_videos_from_repo", data=payload)
+    result = requests.post(url="http://image_to_video.builder:5002/build_videos_from_repo", data=payload)
 
     #payload = list()
     #result = requests.post(url='http://127.0.0.1:5001/save_video', data=payload)
     return render_template("videodownload.html", filenames=result.text)
     #return result.text, result.status_code
 
-@app.route("/request_old_video", methods=["post"])
+@app.route("/request_old_video", methods=['GET', 'POST'])
 def request_old_video():
     request_file_names = str(request.form.get("videonames"))
     terminator = request.args.get("terminator")
@@ -109,13 +109,13 @@ def request_old_video():
     for fn in file_names:
         fnx = fnx + ":" + fn + ":"
     payload = {'filenames': file_names}
-    result = requests.get(url="http://127.0.0.1:5001/load_video", data=payload)
+    result = requests.get(url="http://image_to_video.repo:5001/load_video", data=payload)
 
     if len(file_names) > 0 and (result.status_code == 200 or result.status_code == 201):
         return Response(result.content, mimetype='application/zip', status=200)
 
     payload = list()
-    result = requests.post(url='http://127.0.0.1:5001/save_video', data=payload)
+    result = requests.post(url='http://image_to_video.repo:5001/save_video', data=payload)
     
     d1 = '<a target="_blank" href="/show_video/'
     d2 = '">'
@@ -135,7 +135,7 @@ def show_old_video(filename):
 def display_video(filename):
     payload = {'filename': filename}
 	
-    result = requests.get(url="http://127.0.0.1:5001/show_video", data=payload)
+    result = requests.get(url="http://image_to_video.repo:5001/show_video", data=payload)
     
     #if result.status_code == 200 or result.status_code == 201:
     return Response(result.content, mimetype="video/mp4")
