@@ -29,13 +29,13 @@ def generate_video():
     except:
         return jsonify({'Video generated': False})
 
-@app.route("/build_videos_from_repo", methods={"post"})
+@app.route("/build_videos_from_repo", methods={'GET', 'POST'})
 def build_videos_from_repo():
     filenames = request.form.getlist("filenames")
     video_name = request.form.get("videoname")
     
     payload = {'videoname': video_name, 'filenames': filenames}
-    result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
+    result = requests.get(url="http://image_to_video.repo:5001/load_files", data=payload)
     #print(result.content)
     zip_stream = io.BytesIO(result.content)
     if(not video_name.endswith(".mp4")):
@@ -58,7 +58,7 @@ def build_videos_from_repo():
         build_video_from_pngs(image_folder, video_name)
 
     with open(video_name, "rb") as file:
-        result = requests.post(url='http://127.0.0.1:5001/save_video', files={"video": file})
+        result = requests.post(url='http://image_to_video.repo:5001/save_video', files={"video": file})
         return result.text, result.status_code
 
     return "internal server error", 500

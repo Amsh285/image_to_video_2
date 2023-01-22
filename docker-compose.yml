@@ -1,36 +1,30 @@
 version: '3'
 services:
     image_to_video.web:
-        #build:
-            #context: ./frontend
-            #target: frontend
+        build: ./frontend
         image: image_to_video/frontend
         ports:
             - '5000:5000'
-        volumes:
-            - 'image_to_video_store:/app/uploads'
+        # volumes:
+        #     - 'image_to_video_store:/image_to_video/uploads'
         networks:
             - image_to_video_net
     image_to_video.repo:
-        build:
-            context: ./repository
-            target: repository
+        build: ./repository
         image: image_to_video/repository
         ports:
             - '5001:5001'
-        volumes:
-            - 'image_to_video_store:/app/uploads'
+        # volumes:
+        #     - 'image_to_video_store:/image_to_video/uploads'
         networks:
             - image_to_video_net
     image_to_video.builder:
-        #build:
-            #context: ./videobuilder
-            #target: videobuilder
+        build: ./videobuilder
         image: image_to_video/videobuilder
         ports:
             - '5002:5002'
-        volumes:
-            - 'image_to_video_store:/app/uploads'
+        # volumes:
+        #     - 'image_to_video_store:/image_to_video/uploads'
         networks:
             - image_to_video_net
     image_queue:

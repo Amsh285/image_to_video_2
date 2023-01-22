@@ -8,7 +8,7 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
-WORKDIR /app
+WORKDIR /image_to_video
 COPY . .
 EXPOSE 5002
 CMD [ "flask", "run" ]

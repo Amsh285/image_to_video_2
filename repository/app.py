@@ -10,11 +10,11 @@ app = Flask(__name__)
 
 #flask --app repository/main run --port=5001
 
-@app.route("/test", methods=["get"])
+@app.route("/test", methods=["get", "post"])
 def test():
     return "ahoi";
 
-@app.route("/save_files", methods=["post"])
+@app.route("/save_files", methods=["get", "post"])
 def upload_files():
     form_data = request.form.to_dict()
     video_name = request.form.get("videoname")
@@ -32,7 +32,7 @@ def upload_files():
 
     return list_files(), 201
 
-@app.route("/save_video", methods=["post"])
+@app.route("/save_video", methods=["get", "post"])
 def save_video():
     video_folder = os.path.join(app.instance_path, "upload_videos")
     os.makedirs(video_folder, exist_ok=True)
@@ -43,7 +43,7 @@ def save_video():
 
     return list_videos(), 201
 
-@app.route("/load_files", methods={"get"})
+@app.route("/load_files", methods={"get", "post"})
 def download_files():
     filenames = request.form.getlist("filenames")
     video_name = request.form.get("videoname")
@@ -68,7 +68,7 @@ def download_files():
 
     return send_file(stream, as_attachment=True, download_name="archive.zip")
 
-@app.route("/load_video", methods={"get"})
+@app.route("/load_video", methods={"get", "post"})
 def download_videos():
     filenames = request.form.getlist("filenames")
     image_folder = os.path.join(app.instance_path, "upload_videos")
@@ -88,7 +88,7 @@ def download_videos():
 
     return send_file(stream, as_attachment=True, download_name="archive.zip")
 
-@app.route("/show_video", methods={"get"})
+@app.route("/show_video", methods={"get", "post"})
 def show_video():
     filename = request.form.get("filename")
     
