@@ -1,2 +1,2 @@
-set FLASK_APP=repository/main.py
+set FLASK_APP=repository/app.py
 flask run -p 5001

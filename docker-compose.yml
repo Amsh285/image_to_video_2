@@ -1,9 +1,9 @@
 version: '3'
 services:
     image_to_video.web:
-        build:
-            context: ./frontend
-            target: frontend
+        #build:
+            #context: ./frontend
+            #target: frontend
         image: image_to_video/frontend
         ports:
             - '5000:5000'
@@ -23,9 +23,9 @@ services:
         networks:
             - image_to_video_net
     image_to_video.builder:
-        build:
-            context: ./videobuilder
-            target: videobuilder
+        #build:
+            #context: ./videobuilder
+            #target: videobuilder
         image: image_to_video/videobuilder
         ports:
             - '5002:5002'
@@ -33,6 +33,12 @@ services:
             - 'image_to_video_store:/app/uploads'
         networks:
             - image_to_video_net
+    image_queue:
+        image: rabbitmq:3-management
+        ports:
+            - '15672:15672'
+        networks:
+            - image_to_video_net       
 networks:
     image_to_video_net:
         driver: bridge
