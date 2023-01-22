@@ -49,6 +49,9 @@ def navigate_show_video():
 def save_images():
     payload = list()
 
+    video_name = request.form.get("videoname")
+    payload.append(("videoname", video_name))
+
     for file in request.files.getlist("imgs"):
         t = file.read()
         payload.append((file.filename, base64.b64encode(t)))
@@ -62,9 +65,13 @@ def load_files():
     request_file_names = request.args.get("filenames")
     terminator = request.args.get("terminator")
 
-    file_names = request_file_names.split(terminator)
+    video_name = request.args.get("videoname")
+    
 
-    payload = {'filenames': file_names}
+    file_names = request_file_names.split(terminator)
+    print("folder:" + video_name)
+    payload = {'filenames': file_names, 'videoname': video_name}
+
     result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
 
     if result.status_code == 200 or result.status_code == 201:
@@ -89,8 +96,8 @@ def request_generate_video():
 
     #payload = list()
     #result = requests.post(url='http://127.0.0.1:5001/save_video', data=payload)
-    #return render_template("videodownload.html", filenames=result.text)
-    return result.text, result.status_code
+    return render_template("videodownload.html", filenames=result.text)
+    #return result.text, result.status_code
 
 @app.route("/request_old_video", methods=["post"])
 def request_old_video():
@@ -101,7 +108,7 @@ def request_old_video():
     file_names = request_file_names.split(terminator)
     for fn in file_names:
         fnx = fnx + ":" + fn + ":"
-    payload = {'filename': file_names}
+    payload = {'filenames': file_names}
     result = requests.get(url="http://127.0.0.1:5001/load_video", data=payload)
 
     if len(file_names) > 0 and (result.status_code == 200 or result.status_code == 201):

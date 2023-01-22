@@ -17,15 +17,18 @@ def test():
 @app.route("/save_files", methods=["post"])
 def upload_files():
     form_data = request.form.to_dict()
-
-    image_folder = os.path.join(app.instance_path, "upload_images")
+    video_name = request.form.get("videoname")
+    if video_name is None:
+        video_name = ""
+    image_folder = os.path.join(app.instance_path, "upload_images", video_name)
     os.makedirs(image_folder, exist_ok=True)
 
     for b in request.form.to_dict():
-        byte_content = base64.b64decode(form_data[b])
-        if(len(byte_content) > 0):
-            with open(os.path.join(image_folder, b), "wb") as binary_file:
-                binary_file.write(byte_content)
+        if (b!="videoname"):
+            byte_content = base64.b64decode(form_data[b])
+            if(len(byte_content) > 0):
+                with open(os.path.join(image_folder, b), "wb") as binary_file:
+                    binary_file.write(byte_content)
 
     return list_files(), 201
 
@@ -43,7 +46,12 @@ def save_video():
 @app.route("/load_files", methods={"get"})
 def download_files():
     filenames = request.form.getlist("filenames")
-    image_folder = os.path.join(app.instance_path, "upload_images")
+    video_name = request.form.get("videoname")
+
+    if video_name is None:
+        video_name = ""
+    image_folder = os.path.join(app.instance_path, "upload_images", video_name)
+
     stream = BytesIO()
 
     with ZipFile(stream, 'w') as zf:
@@ -51,7 +59,7 @@ def download_files():
             try:
                 zf.write(os.path.join(image_folder, filename), filename)
             except FileNotFoundError:
-                return f'File: {filename} could not be found', 404
+                return f'File: {image_folder} {filename} could not be found', 404
             except IOError:
                 return f'File: {filename} could not be processes', 500
             except OSError:
@@ -65,7 +73,7 @@ def download_videos():
     filenames = request.form.getlist("filenames")
     image_folder = os.path.join(app.instance_path, "upload_videos")
     stream = BytesIO()
-
+    print(f"folder:{image_folder} {filenames}")
     with ZipFile(stream, 'w') as zf:
         for filename in filenames:
             try:
@@ -103,6 +111,9 @@ def list_files():
     for filename in os.listdir(image_folder):
         if os.path.isfile(os.path.join(image_folder, filename)):
             tableEntries = tableEntries + strTableEntry.replace("filename", filename)
+        else:
+            for filename2 in os.listdir(os.path.join(image_folder, filename)):
+                tableEntries = tableEntries + strTableEntry.replace("filename", filename + "/" + filename2)
     return strTablefirst + tableEntries + strTablelast
 
 def list_videos():

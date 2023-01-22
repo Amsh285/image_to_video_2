@@ -33,11 +33,13 @@ def generate_video():
 def build_videos_from_repo():
     filenames = request.form.getlist("filenames")
     video_name = request.form.get("videoname")
-
-    payload = {'filenames': filenames}
+    
+    payload = {'videoname': video_name, 'filenames': filenames}
     result = requests.get(url="http://127.0.0.1:5001/load_files", data=payload)
-
+    #print(result.content)
     zip_stream = io.BytesIO(result.content)
+    if(not video_name.endswith(".mp4")):
+        video_name = video_name + ".mp4"
 
     image_folder = os.path.join(app.instance_path, "temp_images")
     if os.path.exists(image_folder):
@@ -54,9 +56,6 @@ def build_videos_from_repo():
                 binary_file.write(img[0])
 
         build_video_from_pngs(image_folder, video_name)
-
-    shutil.rmtree(image_folder)
-    payload = list()
 
     with open(video_name, "rb") as file:
         result = requests.post(url='http://127.0.0.1:5001/save_video', files={"video": file})

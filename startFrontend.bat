@@ -1,2 +1,2 @@
-set FLASK_APP=frontend/main.py
+set FLASK_APP=frontend/app.py
 flask run -p 5000
