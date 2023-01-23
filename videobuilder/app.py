@@ -3,6 +3,7 @@ import shutil
 from flask import Flask, jsonify, request
 import requests
 import base64
+import pika
 
 from video_builder_cv2 import build_video_from_pngs
 
@@ -62,6 +63,9 @@ def build_videos_from_repo():
         return result.text, result.status_code
 
     return "internal server error", 500
+
+if __name__ == "__main__":
+    app.run()
 
 
 #if __name__ == '__main__':   

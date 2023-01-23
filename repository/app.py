@@ -45,11 +45,22 @@ def save_video():
 
 @app.route("/load_files", methods={"get", "post"})
 def download_files():
-    filenames = request.form.getlist("filenames")
-    video_name = request.form.get("videoname")
+    try:
+        filenames = request.form.getlist("filenames")
+        video_name = request.form.get("videoname")
+    
+        if video_name is None:
+            video_name = request.args.get("videoname")
+        if filenames is None or len(filenames) < 1:
+            filenames = request.args.getlist("filenames")
 
-    if video_name is None:
-        video_name = ""
+        if video_name is None:
+            video_name = ""
+
+        print("repo got: "+ video_name+"," +filenames)
+    except Exception as e:
+         print("Exception: "+ repr(e))
+
     image_folder = os.path.join(app.instance_path, "upload_images", video_name)
 
     stream = BytesIO()

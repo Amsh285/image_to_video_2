@@ -1,8 +1,14 @@
 version: '3'
 services:
+    image_queue:
+        image: rabbitmq:3-management
+        ports:
+            - '15672:15672'
+        networks:
+            - image_to_video_net                
     image_to_video.web:
         build: ./frontend
-        image: image_to_video/frontend
+        image: image_to_video_2/frontend
         ports:
             - '5000:5000'
         # volumes:
@@ -11,7 +17,7 @@ services:
             - image_to_video_net
     image_to_video.repo:
         build: ./repository
-        image: image_to_video/repository
+        image: image_to_video_2/repository
         ports:
             - '5001:5001'
         # volumes:
@@ -20,19 +26,13 @@ services:
             - image_to_video_net
     image_to_video.builder:
         build: ./videobuilder
-        image: image_to_video/videobuilder
+        image: image_to_video_2/videobuilder
         ports:
             - '5002:5002'
         # volumes:
         #     - 'image_to_video_store:/image_to_video/uploads'
         networks:
-            - image_to_video_net
-    image_queue:
-        image: rabbitmq:3-management
-        ports:
-            - '15672:15672'
-        networks:
-            - image_to_video_net       
+            - image_to_video_net  
 networks:
     image_to_video_net:
         driver: bridge
