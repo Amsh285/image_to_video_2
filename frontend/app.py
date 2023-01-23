@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, send_file, Response
+from flask import Flask, render_template, request, send_file, Response, jsonify
 import requests
 import base64
 import os
+import pika
 
 #flask --app main run
 #flask --app frontend/main run --port=5000
@@ -88,14 +89,19 @@ def request_generate_video():
     request_file_names = request.form.get("filenames")
     terminator = request.form.get("terminator")
     video_name = request.form.get("videoname")
+    
+    send2VideoComposer(video_name, request_file_names)
 
-    file_names = request_file_names.split(terminator)
-    payload = {'videoname': video_name, 'filenames': file_names}
+    # file_names = request_file_names.split(terminator)
+    # payload = {'videoname': video_name, 'filenames': file_names}
 
-    result = requests.post(url="http://image_to_video.builder:5002/build_videos_from_repo", data=payload)
+    # result = requests.post(url="http://image_to_video.builder:5002/build_videos_from_repo", data=payload)
 
     #payload = list()
     #result = requests.post(url='http://127.0.0.1:5001/save_video', data=payload)
+
+    payload = list()
+    result = requests.post(url='http://image_to_video.repo:5001/save_files', data=payload)
     return render_template("videodownload.html", filenames=result.text)
     #return result.text, result.status_code
 
@@ -140,3 +146,17 @@ def display_video(filename):
     #if result.status_code == 200 or result.status_code == 201:
     return Response(result.content, mimetype="video/mp4")
     #return send_file(os.path.join("./", filename))
+
+
+def send2VideoComposer(videoname, filenames):
+    payload = f"{videoname};{filenames}"
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host = 'image_queue', port = 5672, credentials=pika.PlainCredentials("guest", "guest")))
+    channel = connection.channel()
+    channel.queue_declare(queue='VideoComposer')
+    print(" [x] Sent {payload}")
+    channel.basic_publish('','VideoComposer',
+                      payload, pika.BasicProperties(content_type='text/plain',
+                                               delivery_mode=2))
+
+    connection.close()
+    return
